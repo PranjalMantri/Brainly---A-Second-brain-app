@@ -6,8 +6,12 @@ dotenv.config();
 
 const port = process.env.PORT;
 
-connectDb().then(() => {
-  app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+connectDb()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.log("Database connection failed ", error);
   });
-});
