@@ -4,7 +4,7 @@ import {
   findUserByEmail,
   getUserDetails,
 } from "../services/user.service";
-import { signJwt } from "../utils/jwt";
+import { signJwt } from "../utils/signjwt";
 import { apiResponse } from "../utils/apiResponse";
 
 export const registerUser = async (req: Request, res: Response) => {
@@ -68,4 +68,18 @@ export const loginUser = async (req: Request, res: Response) => {
     .send(
       apiResponse(true, "User login successful", { accessToken, refreshToken })
     );
+};
+
+export const getUser = async (req: Request, res: Response) => {
+  const userId = req.body._id;
+
+  const user = await getUserDetails(userId);
+
+  if (!user) {
+    res.status(500).send(apiResponse(false, "User does not exist"));
+  }
+
+  res
+    .status(200)
+    .send(apiResponse(true, "Successfuly fetched user details", user));
 };
