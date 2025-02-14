@@ -1,10 +1,16 @@
-import { Schema, Document, model, CallbackError } from "mongoose";
+import { Schema, Document, model, CallbackError, Types } from "mongoose";
 import bcrypt from "bcrypt";
 
-interface UserDocument extends Document {
+interface CreateUserInput {
   email: string;
   username: string;
   password: string;
+}
+
+interface UserDocument extends CreateUserInput, Document {
+  _id: Types.ObjectId;
+  updateAt: Date;
+  createdAt: Date;
   comparePasswords(candidatePassword: string): Promise<boolean>;
 }
 
@@ -50,4 +56,4 @@ userSchema.methods.comparePasswords = async function (
 
 const User = model<UserDocument>("User", userSchema);
 
-export default User;
+export { User, CreateUserInput, UserDocument };
