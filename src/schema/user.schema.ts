@@ -20,6 +20,11 @@ export const CreateUserSchema = z
     path: ["confirmPassword"],
   });
 
-type CreateUserInputFull = z.infer<typeof CreateUserSchema>;
-
-export type CreateUserInput = Omit<CreateUserInputFull, "confirmPassword">;
+export const LoginUserSchema = z.object({
+  email: z
+    .string({ required_error: "Email is required" })
+    .email("Not a valid email"),
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(6, "Password must be atleast 6 characters"),
+});

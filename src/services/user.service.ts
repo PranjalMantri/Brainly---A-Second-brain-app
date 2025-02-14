@@ -27,3 +27,15 @@ export const getUserDetails = async (
     throw new Error(`Error fetching user details: ${error.message}`);
   }
 };
+
+export const findUserByEmail = async (email: string): Promise<UserDocument> => {
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) throw new Error("User not found");
+
+    return user;
+  } catch (error: any) {
+    throw new Error(`Error finding user: ${error.message}`);
+  }
+};
