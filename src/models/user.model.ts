@@ -2,6 +2,7 @@ import { Schema, Document, model, CallbackError } from "mongoose";
 import bcrypt from "bcrypt";
 
 interface UserDocument extends Document {
+  email: string;
   username: string;
   password: string;
   comparePasswords(candidatePassword: string): Promise<boolean>;
@@ -9,6 +10,11 @@ interface UserDocument extends Document {
 
 const userSchema = new Schema<UserDocument>(
   {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     username: {
       type: String,
       required: true,
