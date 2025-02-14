@@ -5,6 +5,7 @@ import {
   getUserDetails,
 } from "../services/user.service";
 import { signJwt } from "../utils/jwt";
+import { apiResponse } from "../utils/apiResponse";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -15,20 +16,30 @@ export const registerUser = async (req: Request, res: Response) => {
     const user = await createUser({ email, username, password });
 
     if (!user) {
-      res.status(400).json({ message: "User could not be created" });
+      res.status(400).send(apiResponse(false, "User already exists"));
     }
 
     const existingUser = await getUserDetails(user._id);
 
     if (!existingUser) {
-      res.status(404).json({ message: "User details not found" });
+      res
+        .status(404)
+        .send(
+          apiResponse(false, "Something went wrong while registering the user")
+        );
     }
 
     // return the use data without the password
-    res.status(201).send(existingUser);
+    res
+      .status(201)
+      .send(apiResponse(true, "User registration successful", existingUser));
   } catch (error: any) {
     console.error("Error in registerUser:", error);
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .send(
+        apiResponse(false, "Something went wrong while registering the user")
+      );
   }
 };
 
@@ -43,7 +54,7 @@ export const loginUser = async (req: Request, res: Response) => {
   const isValid = existingUser.comparePasswords(password);
 
   if (!isValid) {
-    res.status(404).send({ message: "User does not exist" });
+    res.status(404).send(apiResponse(false, "User does not exist"));
     return;
   }
 
@@ -52,5 +63,9 @@ export const loginUser = async (req: Request, res: Response) => {
   const refreshToken = signJwt(existingUser, { expiresIn: "30d" });
 
   // return accessToken and refreshToken
-  res.status(200).send({ accessToken, refreshToken });
+  res
+    .status(200)
+    .send(
+      apiResponse(true, "User login successful", { accessToken, refreshToken })
+    );
 };
